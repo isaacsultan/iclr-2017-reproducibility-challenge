@@ -1,0 +1,53 @@
+As required by the license attached to the original source code, we defined below all the files taken from the original project and the modifications that we've made on them
+
+Original Project's source code : https://github.com/nyu-mll/multiNLI
+
+file models/tf_esim.py
+---
+Original file : https://github.com/nyu-mll/multiNLI/blob/master/python/models/esim.py
+Modifications :
+    - Changed the name of the class MyModel to TfEsim;
+    - Changed the second dimension of self.W_cl from 3 to 1 (to handle binary classification instead of multinomial classification)
+    - Changed the dimension of self.b_cl from 3 to 1 (same reason as self.W_cl)
+    - Used relu activation instead of tanh activation in line 135
+    - Used sigmoid activation function at the second feed-forward layer (line 145)
+    - Used sigmoid_cross_entropy_with_logits instead of sparse_softmax_cross_entropy_with_logits (line 149)
+
+    - Added self.predictions as a distinct variable to self.logits, to use into the total cost
+    - Added self.logit_probs, which is the result of the sigmoid activation function
+    - Changed self.logit to be the final classification output (i.e. rounding the result of the sigmoid function to either 0 or 1)
+
+
+file util/tf_blocks.py
+---
+Original file : https://github.com/nyu-mll/multiNLI/blob/master/python/util/blocks.py
+No modifications have been made (Except for removing the file's docstring)
+
+
+file util/evaluate.py
+---
+Original file : https://github.com/nyu-mll/multiNLI/blob/master/python/util/evaluate.py
+Modifications :
+    - Removed functions "evaluate_classifier_genre" and "predictions_kaggle";
+    - Changed how to access the eval_set's label column (use integer indexing instead of key indexing);
+    - Changed the returned values from classifier function
+    - Changed evaluate_final to only have one evaluation set (eval_set) instead of an array of evaluation sets
+
+
+
+file train_model.py
+---
+Original file : https://github.com/nyu-mll/multiNLI/blob/master/python/train_mnli.py
+Modifications : 
+    - Removed everything that uses FIXED_PARAMETERS, replaced model hyperparameters with fixed values;
+    - Removed the loading data code found before the definition of the modelClassifier class;
+    - Added function get_embed_indices;
+    - Removed alpha parameter from class modelClassifier;
+    - Used TfEsim model instead of generic MyModel;
+    - Used integer indexing for columns in the dataset;
+    - Removed everything related to having snli data and mnli data; Only use our data from the ubuntu corpus instead;
+    - Changed how to handle checkpoints; Differentiate between best model and last five models
+    - Added log_res array to log values that we print while displaying steps
+    - Save model everytime we print step values
+    - Changed classify function to account for all elements in the examples (including those in the last smaller batch)
+    - Changed training procedure to account for our model
